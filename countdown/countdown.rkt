@@ -24,3 +24,69 @@ analysis before starting to work on the code file.
 
 Once you are finished the simple version of the program, you can improve
 it by reseting the countdown to ten when you press the spacebar.")
+
+
+;; A countdown timer that displays the number of seconds remaining
+
+;; =================
+;; Constants:
+(define WIDTH 100)
+(define HEIGHT 100)
+(define MTS (empty-scene WIDTH HEIGHT))
+
+(define TEXT-SIZE 64)
+(define TEXT-COLOR 'black)
+
+(define TEXT-CX (/ 2 WIDTH))
+(define TEXT-CY (/ 2 HEIGHT))
+
+;; =================
+;; Data definitions:
+
+;; Countdown is Integer[10,0]
+;; - Number of seconds remaining
+(define START-TIME 10)
+(define END-TIME 0)
+
+#;
+(define (fn-for-countdown cd)
+  (... cd))
+
+
+;; =================
+;; Functions:
+
+;; Countdown -> Countdown
+;; start the world with (main 10)
+;; 
+(define (main ws)
+  (big-bang ws                     ; Countdown
+            (on-tick   tock 1)     ; Countdown -> Countdown
+            (to-draw   render)     ; Countdown -> Image
+            #;(stop-when ...)      ; Countdown -> Boolean
+            #;(on-mouse  ...)      ; Countdown Integer Integer MouseEvent -> Countdown
+            #;(on-key    ...)))    ; Countdown KeyEvent -> Countdown
+
+;; Countdown -> Countdown
+;; produce the next state by subtracting 1 second, stop at 0.
+(check-expect (tock 0) 0)
+(check-expect (tock 1) 0)
+(check-expect (tock 10) 9)
+
+;(define (tock ws) 0); stub
+
+;;<template from Countdown>
+(define (tock cd)
+  (if (<= cd 0) 0 (- cd 1)))
+
+
+;; Countdown -> Image
+;; render the text of remaining seconds in the center of the scene
+(check-expect (render 0) (overlay (text (number->string 0) TEXT-SIZE TEXT-COLOR) MTS))
+
+#;(define (render ws) MTS) ; stub
+
+;;<template from Countdown>
+(define (render cd)
+  (overlay (text (number->string cd) TEXT-SIZE TEXT-COLOR) MTS))
+
