@@ -98,10 +98,49 @@ character. The only thing that matters about their health is:
 
 Design a data definition called Health to represent the health of your
 character.
+")
 
-Design a function called increase-health that allows you to increase the
+
+;; Health is one of:
+;; - false
+;; - Natural
+;; interp. false means dead, Natural is the number of extra lives
+
+(define H0 false) ;; dead
+(define H1 5) ;; 5 extra lives
+
+#;
+(define (fn-for-health h)
+  (cond [(false? h) (...)]
+        [else (... h)]))
+
+;; Template rules used:
+;;  - one of: 2 cases
+;;  - atomic distinct: false
+;;  - atomic non-distinct: Natural
+
+#;
+("Design a function called increase-health that allows you to increase the
 lives of a character.  The function should only increase the lives
 of the character if the character is not dead, otherwise the character
 remains dead.
 ")
 
+;; Health Natural -> Health
+;; add to the number of extra lives iff the character is not already dead
+(check-expect (increase-health H0 3) H0)
+(check-expect (increase-health H1 3) 8)
+
+;(define (increase-health h lives) #f) ; stub kills the character first ;)
+
+;; template from data definition for health
+#;
+(define (increase-health h l)
+  (cond [(false? h) (...)]
+        [else (... h)]))
+
+(define (increase-health h l)
+  (cond [(false? h) h]
+        [else (+ h l)]))
+
+;; TODO maybe change sig to Health Health -> Health
