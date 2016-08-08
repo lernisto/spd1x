@@ -69,9 +69,8 @@ book on which this course is based.
             (to-draw   render)   ; CatX -> Image
             #;
             (stop-when ...)      ; CatX -> Boolean
-            #;
-            (on-mouse  ...)      ; CatX Integer Integer MouseEvent -> CatX
-            (on-key    handle-key)))    ; CatX KeyEvent -> CatX
+            (on-mouse handle-mouse) ; CatX Integer Integer MouseEvent -> CatX
+            (on-key   handle-key))) ; CatX KeyEvent -> CatX
 
 ;; CatX -> CatX
 ;; produce the next position of the Cat by moving CAT-SPEED pixels to the right
@@ -108,4 +107,16 @@ book on which this course is based.
 ;;<use template from HtDW big-bang>
 (define (handle-key catx ke)
   (cond [(key=? ke " ") 0]
+        [else catx]))
+
+;; CatX Integer Integer MouseEvent -> CatX
+;; move cat to x position of mouse when button clicked
+(check-expect (handle-mouse 0 30 17 "button-down") 30)
+(check-expect (handle-mouse 3 30 17 "move") 3)
+
+;(define (handle-mouse ws x y me) 0) ; stub
+
+;;<use template from HtDW big-bang>
+(define (handle-mouse catx x y me)
+  (cond [(mouse=? me "button-down") x]
         [else catx]))
