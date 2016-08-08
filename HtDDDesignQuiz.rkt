@@ -72,8 +72,20 @@ Problem 3:
 Design a function called months-old that takes a person's age in years 
 and yields that person's age in months.
 ")
+;; Age -> MonthAge
+;; produce the age in months from the age in years
+(check-expect (months-old A0) (* 12 A0))
+(check-expect (months-old A1) (* 12 A1))
 
+;(define (months-old a) 0) ; stub
 
+; template from data definition for Age
+#;
+(define (months-old a)
+  (... a))
+
+(define (months-old a)
+  (* 12 a))
 
 #;
 ("Problem 4:
