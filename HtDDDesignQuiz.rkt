@@ -26,6 +26,27 @@ Design a function called teenager? that determines whether a person
 of a particular age is a teenager (i.e., between the ages of 13 and 19).
 ")
 
+;; Age -> Boolean
+;; produces true iff age is in [13, 19]
+
+(check-expect (teenager? 12) #f)
+(check-expect (teenager? 13) #t)
+(check-expect (teenager? 19) #t)
+(check-expect (teenager? 20) #f)
+
+
+; (define (teenager? age) #f) ; stub
+
+
+; template from data definition for Age
+#;
+(define (teenager? a)
+  (... a))
+
+(define (teenager? a)
+  (and (>= a 13) (<= a 19)))
+
+
 
 #;
 ("Problem 2:
