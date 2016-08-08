@@ -34,9 +34,7 @@ of a particular age is a teenager (i.e., between the ages of 13 and 19).
 (check-expect (teenager? 19) #t)
 (check-expect (teenager? 20) #f)
 
-
 ; (define (teenager? age) #f) ; stub
-
 
 ; template from data definition for Age
 #;
@@ -53,6 +51,18 @@ of a particular age is a teenager (i.e., between the ages of 13 and 19).
 
 Design a data definition called MonthAge to represent a person's age
 in months.")
+
+;; MonthAge is Natural
+;; interp. the age of a person in months
+(define MA0 18)
+(define MA1 25)
+
+#;
+(define (fn-for-month-age ma)
+  (... ma))
+
+;; Template rules used:
+;; - atomic non-distinct: Natural
 
 
 #;
