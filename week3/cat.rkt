@@ -71,8 +71,7 @@ book on which this course is based.
             (stop-when ...)      ; CatX -> Boolean
             #;
             (on-mouse  ...)      ; CatX Integer Integer MouseEvent -> CatX
-            #;
-            (on-key    ...)))    ; CatX KeyEvent -> CatX
+            (on-key    handle-key)))    ; CatX KeyEvent -> CatX
 
 ;; CatX -> CatX
 ;; produce the next position of the Cat by moving CAT-SPEED pixels to the right
@@ -95,3 +94,18 @@ book on which this course is based.
 (define (render catx)
   (place-image CAT-IMG catx CAT-Y MTS))
 
+
+;; CatX KeyEvent -> CatX
+;; restart the movement at the left edge when spacebar is pressed
+;; !!!
+(check-expect (handle-key 10 " ") 0)
+(check-expect (handle-key 10 "a") 10)
+(check-expect (handle-key 0 " ") 0)
+(check-expect (handle-key 0 "a") 0)
+
+;(define (handle-key catx keyevent) 0) ;stub
+
+;;<use template from HtDW big-bang>
+(define (handle-key catx ke)
+  (cond [(key=? ke " ") 0]
+        [else catx]))
