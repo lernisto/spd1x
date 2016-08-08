@@ -39,3 +39,76 @@ Note: If you want to design a slightly simpler version of the program,
 you can modify it to display a single circle that changes color, rather
 than three stacked circles. 
 ")
+
+;; Go light program
+
+;; =================
+;; Constants:
+(define TICK-RATE 1)
+
+
+;; =================
+;; Data definitions:
+
+;; LightState is one of:
+;;  - 'RED
+;;  - 'YELLOW
+;;  - 'GREEN
+
+#;
+(define (fn-for-light l)
+  (cond [(symbol=? 'RED l) (...)]
+         [(symbol=? 'YELLOW l) (...)]
+         [(symbol=? 'GREEN l) (...)]))
+
+;; Templates used:
+;; - one of: 3 cases
+;; - atomic distinct: 'RED
+;; - atomic distinct: 'YELLOW
+;; - atomic distinct: 'GREEN
+
+
+;; =================
+;; Functions:
+
+;; LightState -> LightState
+;; start the world with (main 'RED)
+;; 
+(define (main ws)
+  (big-bang ws                   ; LightState
+            (on-tick   tock TICK-RATE)     ; LightState -> LightState
+            (to-draw   render)   ; LightState -> Image
+            #;(stop-when ...)      ; LightState -> Boolean
+            #;(on-mouse  ...)      ; LightState Integer Integer MouseEvent -> LightState
+            #;(on-key    ...)))    ; LightState KeyEvent -> LightState
+
+;; LightState -> LightState
+;; produce the next light state: green->yellow->red->green
+(check-expect (tock 'RED) 'GREEN)
+(check-expect (tock 'YELLOW) 'RED)
+(check-expect (tock 'GREEN) 'YELLOW)
+
+;; (define (tock ws) #f) ;stub
+
+;; <template from LightState>
+(define (tock l)
+  (cond [(symbol=? 'RED l) 'GREEN]
+         [(symbol=? 'YELLOW l) 'RED]
+         [(symbol=? 'GREEN l) 'YELLOW]))
+
+
+;; LightState -> Image
+;; render the image for the current state
+
+(check-expect (render 'RED) RED-IMG)
+(check-expect (render 'YELLOW) YELLOW-IMG)
+(check-expect (render 'GREEN) GREEN-IMG)
+
+;; (define (render ws) ...) ;stub
+
+;; <template from LightState>
+(define (render l)
+  (cond [(symbol=? 'RED l) RED-IMG]
+         [(symbol=? 'YELLOW l) YELLOW-IMG]
+         [(symbol=? 'GREEN l) GREEN-IMG]))
+
