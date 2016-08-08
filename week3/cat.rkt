@@ -37,6 +37,7 @@ book on which this course is based.
 (define MTS (empty-scene WIDTH HEIGHT))
 (define CAT-Y (/ HEIGHT 2))
 (define CAT-IMG (bitmap "cat1.png"))
+(define CAT-SPEED 3) ; pixels per tick
 
 ;; =================
 ;; Data definitions:
@@ -75,13 +76,13 @@ book on which this course is based.
 
 ;; CatX -> CatX
 ;; produce the next position of the Cat
-(check-expect (advance-cat 0) 1)
+(check-expect (advance-cat 0) CAT-SPEED)
 
 ;(define (advance-cat catx) 0) ;stub
 
 ;; <use template from CatX>
 (define (advance-cat catx)
-  (+ 1 catx))
+  (+ CAT-SPEED catx))
 
 
 ;; CatX -> Image
