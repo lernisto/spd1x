@@ -75,7 +75,7 @@ book on which this course is based.
             (on-key    ...)))    ; CatX KeyEvent -> CatX
 
 ;; CatX -> CatX
-;; produce the next position of the Cat
+;; produce the next position of the Cat by moving CAT-SPEED pixels to the right
 (check-expect (advance-cat 0) CAT-SPEED)
 
 ;(define (advance-cat catx) 0) ;stub
