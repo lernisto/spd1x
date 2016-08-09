@@ -43,3 +43,29 @@ and produces the title of the most recently released movie.
 Note that the rule for templating a function that consumes two compound data 
 parameters is for the template to include all the selectors for both 
 parameters.")
+
+
+;; Movie Movie -> String
+;; produce the name of the most recently released movie
+(check-expect (newest M1 M2) "Inside Out")
+(check-expect (newest M2 M1) "Inside Out")
+
+;;(define (newest ma mb) "") ;stub
+
+;; <template from Movie>
+#;
+(define (newest ma mb)
+  (... (movie-name ma)    
+       (movie-budget ma)  
+       (movie-year ma)
+       (movie-name mb)    
+       (movie-budget mb)  
+       (movie-year mb)
+       )
+  )
+
+(define (newest ma mb)
+  (if (< (movie-year ma)
+         (movie-year mb))
+      (movie-name mb)    
+      (movie-name ma))) 
