@@ -44,3 +44,15 @@ and is in a qualifying grade, their name should be added to a special list.
 Design a function to produce true if a student name should be added to this list.
 ")
 
+;; Student -> Boolean
+;; produce true iff the student has allergies and is in grade 6 or below
+(check-expect (special? S1) #f)
+(check-expect (special? S2) #f)
+(check-expect (special? (make-student "Fulano de Tal" 6 #t)) #t)
+
+;;(define (special? s) #f); stub
+
+;; <template from Student>
+(define (special? s)
+  (and (<= (student-grade s) 6)
+       (student-allergic s)))
