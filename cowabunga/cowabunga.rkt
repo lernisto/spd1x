@@ -55,11 +55,11 @@ nose hits the edge of the window, not the center of its body."
 ;; CowState is (make-cow-state xpos velocity)
 ;; - Natural xpos - x position of Cow in screen coordinates 
 ;; - Integer velocity - speed and direction in pixels per tick
-(define CS1 (make-cow-state LEFT-FENCE 1))
-(define CS2 (make-cow-state LEFT-FENCE -1))
-(define CS3 (make-cow-state CTR-X 0))
-(define CS4 (make-cow-state RIGHT-FENCE 1))
-(define CS5 (make-cow-state RIGHT-FENCE -1))
+(define CSLP (make-cow-state LEFT-FENCE 1))
+(define CSLN (make-cow-state LEFT-FENCE -1))
+(define CSCZ (make-cow-state CTR-X 0))
+(define CSRP (make-cow-state RIGHT-FENCE 1))
+(define CSRN (make-cow-state RIGHT-FENCE -1))
 
 #;
 (define (fn-for-cow-state cs)
@@ -81,13 +81,13 @@ nose hits the edge of the window, not the center of its body."
             (to-draw   render)   ; CowState -> Image
             #;(stop-when ...)      ; CowState -> Boolean
             #;(on-mouse  ...)      ; CowState Integer Integer MouseEvent -> CowState
-            #;(on-key    ...)))    ; CowState KeyEvent -> CowState
+            (on-key handle-key)))    ; CowState KeyEvent -> CowState
 
 ;; CowState -> CowState
 ;; produce the next state by adding velocity to xpos, reversing direction at a fence
-(check-expect (tock CS3) CS3) ;; velocity == 0, don't move
-(check-expect (tock CS2) CS1) ;; left-end -> reverse
-(check-expect (tock CS4) CS5) ;; right-end -> reverse
+(check-expect (tock CSCZ) CSCZ) ;; velocity == 0, don't move
+(check-expect (tock CSLN) CSLP) ;; left-end -> reverse
+(check-expect (tock CSRP) CSRN) ;; right-end -> reverse
 ;; normal motion
 (check-expect (tock (make-cow-state CTR-X 1)) (make-cow-state (+ CTR-X 1) 1))
 (check-expect (tock (make-cow-state CTR-X -1)) (make-cow-state (+ CTR-X -1) -1))
@@ -117,10 +117,10 @@ nose hits the edge of the window, not the center of its body."
 
 ;; CowState -> Image
 ;; render the Cow at xpos, facing left iff velocity < 0
-(check-expect (render CS1) (place-image IMG-RIGHT LEFT-FENCE CTR-Y MTS))
-(check-expect (render CS2) (place-image IMG-LEFT LEFT-FENCE CTR-Y MTS))
-(check-expect (render CS4) (place-image IMG-RIGHT RIGHT-FENCE CTR-Y MTS))
-(check-expect (render CS5) (place-image IMG-LEFT RIGHT-FENCE CTR-Y MTS))
+(check-expect (render CSLP) (place-image IMG-RIGHT LEFT-FENCE CTR-Y MTS))
+(check-expect (render CSLN) (place-image IMG-LEFT LEFT-FENCE CTR-Y MTS))
+(check-expect (render CSRP) (place-image IMG-RIGHT RIGHT-FENCE CTR-Y MTS))
+(check-expect (render CSRN) (place-image IMG-LEFT RIGHT-FENCE CTR-Y MTS))
 
 ;(define (render ws) MTS) ; stub
 
@@ -131,3 +131,73 @@ nose hits the edge of the window, not the center of its body."
                    IMG-RIGHT)
                (cow-state-xpos cs) CTR-Y
                MTS))
+
+;; CowState -> CowState
+;; reverse the direction the cow is traveling
+(check-expect (reverse-cow-state CSLP) CSLN)
+(check-expect (reverse-cow-state CSCZ) CSCZ)
+
+(define (reverse-cow-state cs)
+  (make-cow-state
+   (cow-state-xpos cs)
+   (- (cow-state-velocity cs))))
+
+;; CowState -> CowState
+;; increase the cow speed by one
+(check-expect (faster-cow-state CSLP) (make-cow-state LEFT-FENCE 2))
+(check-expect (faster-cow-state CSLN) (make-cow-state LEFT-FENCE -2))
+
+(define (faster-cow-state cs)
+  (make-cow-state
+   (cow-state-xpos cs)
+   (+ (if (< (cow-state-velocity cs) 0)
+      -1 1)
+      (cow-state-velocity cs))))
+
+;; CowState -> CowState 
+;; decrease the cow speed by one
+(check-expect (slower-cow-state CSLN) (make-cow-state LEFT-FENCE 0))
+(check-expect (slower-cow-state CSLP) (make-cow-state LEFT-FENCE 0))
+(check-expect (slower-cow-state CSCZ) CSCZ)
+
+(define (slower-cow-state cs)
+  (make-cow-state
+   (cow-state-xpos cs)
+   (+ (cond [(< (cow-state-velocity cs) 0) 1]
+            [(> (cow-state-velocity cs) 0) -1]
+            [else 0])
+      (cow-state-velocity cs))))
+
+;; CowState -> CowState
+;; stop the cow (velocity=0)
+(check-expect (stop-cow-state CSLP) (make-cow-state LEFT-FENCE 0))
+
+(define (stop-cow-state cs)
+  (make-cow-state
+   (cow-state-xpos cs)
+   0))
+
+
+;; CowState KeyEvent -> CowState
+;; make the cow reverse direction when space is pressed
+(check-expect (handle-key CSLP " ") CSLN)
+(check-expect (handle-key CSLN " ") CSLP)
+(check-expect (handle-key CSCZ " ") CSCZ)
+(check-expect (handle-key CSLP "s") (make-cow-state LEFT-FENCE 0))
+(check-expect (handle-key CSLP "down") (make-cow-state LEFT-FENCE 0))
+(check-expect (handle-key CSLN "down") (make-cow-state LEFT-FENCE 0))
+(check-expect (handle-key CSLP "up") (make-cow-state LEFT-FENCE 2))
+(check-expect (handle-key CSLN "up") (make-cow-state LEFT-FENCE -2))
+
+(check-expect (handle-key CSLP "a") CSLP)
+
+;;(define (handle-key ws ke) ws) ; stub
+
+;; <template from HtDW>
+
+(define (handle-key ws ke)
+  (cond [(key=? ke " ") (reverse-cow-state ws)]
+        [(key=? ke "down") (slower-cow-state ws)]
+        [(key=? ke "up") (faster-cow-state ws)]
+        [(key=? ke "s") (stop-cow-state ws)]
+        [else ws]))
