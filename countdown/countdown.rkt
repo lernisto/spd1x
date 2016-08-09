@@ -65,7 +65,7 @@ it by reseting the countdown to ten when you press the spacebar.")
             (to-draw   render)     ; Countdown -> Image
             #;(stop-when ...)      ; Countdown -> Boolean
             #;(on-mouse  ...)      ; Countdown Integer Integer MouseEvent -> Countdown
-            #;(on-key    ...)))    ; Countdown KeyEvent -> Countdown
+            (on-key handle-key)))    ; Countdown KeyEvent -> Countdown
 
 ;; Countdown -> Countdown
 ;; produce the next state by subtracting 1 second, stop at 0.
@@ -90,3 +90,18 @@ it by reseting the countdown to ten when you press the spacebar.")
 (define (render cd)
   (overlay (text (number->string cd) TEXT-SIZE TEXT-COLOR) MTS))
 
+;; Countdown KeyEvent -> Countdown
+;; restart the countdown at ten when spacebar is pressed
+(check-expect (handle-key 10 " ") START-TIME)
+(check-expect (handle-key 5 " ") START-TIME)
+(check-expect (handle-key 0 " ") START-TIME)
+(check-expect (handle-key 5 "a") 5)
+
+;(define (handle-key cd ke) 0); stub
+
+;; <template from HtDW>
+(define (handle-key ws ke)
+  (cond [(key=? ke " ") START-TIME]
+        [else ws]))
+
+;; from what I understand of big-bang, you cannot restart the clock
