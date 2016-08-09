@@ -188,13 +188,12 @@ nose hits the edge of the window, not the center of its body."
 (check-expect (handle-key CSLP " ") CSLN)
 (check-expect (handle-key CSLN " ") CSLP)
 (check-expect (handle-key CSCZ " ") CSCZ)
-(check-expect (handle-key CSLP "s") (make-cow LEFT-FENCE 0))
 (check-expect (handle-key CSLP "down") (make-cow LEFT-FENCE 0))
 (check-expect (handle-key CSLN "down") (make-cow LEFT-FENCE 0))
 (check-expect (handle-key CSLP "up") (make-cow LEFT-FENCE 2))
 (check-expect (handle-key CSLN "up") (make-cow LEFT-FENCE -2))
+(check-expect (handle-key CSLP "s") (make-cow LEFT-FENCE 0))
 (check-expect (handle-key CSCZ "q") (stop-with CSCZ))
-
 (check-expect (handle-key CSLP "a") CSLP)
 
 ;;(define (handle-key ws ke) ws) ; stub
