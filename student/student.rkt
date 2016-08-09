@@ -14,6 +14,25 @@ On the trip, lunch must be provided for all students. For each student, track
 their name, their grade (from 1 to 12), and whether or not they have allergies.
 ")
 
+(define-struct student (name grade allergic))
+;; Student is (make-student name grade allergic)
+;; - String name - the student's name
+;; - Natural[1,12] grade - the student's grade level
+;; - Boolean allergic  - whether the student has allergies
+(define S1 (make-student "Jon Do" 3 #f))
+(define S2 (make-student "Marty McFly" 12 #t)) ; allergic to school
+
+#;
+(define (fn-for-student s)
+  (... (student-name s)
+       (student-grade s)
+       (student-allergic s)))
+;; Template rules used:
+;; - compound: 3 fields
+
+  
+
+
 ;; =================
 ;; Functions:
 #;
