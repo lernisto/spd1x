@@ -59,21 +59,23 @@ but we would like you to use compound data.
 ;; - x - Natural[0,WIDTH] screen x position of center of balloon
 ;; - y - Natural[0,HEIGHT] screen y position of center of balloon
 ;; - θ - Number[0,360) angle of rotation in degrees
-;; - dx - Natural[0,WIDTH] change in x pixels per tick
-;; - dy - Natural[0,HEIGHT] change in y pixels per tick
+;; - dx - Integer change in x pixels per tick
+;; - dy - Integer change in y pixels per tick
 ;; - dθ - Number[0,360) change in θ degrees per tick
 (define BSTART (make-balloon 0 CTR-Y 0 3 0 3))
 
 (define (fn-for-ballon bs)
   (...
-    (balloon-x bs)
-    (balloon-y bs)
-    (balloon-θ bs)
-    (balloon-dx bs)
-    (balloon-dy bs)
-    (balloon-dθ bs)
+    (balloon-x bs)  ; Natural[0,WIDTH]
+    (balloon-y bs)  ; Natural[0,HEIGHT]
+    (balloon-θ bs)  ; Number[0,360)
+    (balloon-dx bs) ; Integer
+    (balloon-dy bs) ; Integer
+    (balloon-dθ bs) ; Number[0,360)
     )
 )
+;; template rules used:
+;; - compound: 6 fields
 
 
 ;; =================
