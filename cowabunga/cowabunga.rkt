@@ -63,8 +63,9 @@ nose hits the edge of the window, not the center of its body."
 
 #;
 (define (fn-for-cow cs)
-  (... (cow-x cs)
-       (cow-dx cs)))
+  (... (cow-x cs)   ; Natural[0,WIDTH]
+       (cow-dx cs)  ; Integer
+       ))
 ;; template rules used
 ;; - compound: 2 fields
 
@@ -72,22 +73,22 @@ nose hits the edge of the window, not the center of its body."
 ;; =================
 ;; Functions:
 
-;; CowState -> CowState
+;; CowState → CowState
 ;; start the world with (main CS1)
 ;;
 (define (main ws)
   (big-bang ws                   ; CowState
-            (on-tick   tock)     ; CowState -> CowState
-            (to-draw   render)   ; CowState -> Image
-            #;(stop-when ...)      ; CowState -> Boolean
-            #;(on-mouse  ...)      ; CowState Integer Integer MouseEvent -> CowState
-            (on-key handle-key)))    ; CowState KeyEvent -> CowState
+            (on-tick   tock)     ; CowState → CowState
+            (to-draw   render)   ; CowState → Image
+            #;(stop-when ...)      ; CowState → Boolean
+            #;(on-mouse  ...)      ; CowState Integer Integer MouseEvent → CowState
+            (on-key handle-key)))    ; CowState KeyEvent → CowState
 
-;; CowState -> CowState
+;; CowState → CowState
 ;; produce the next state by adding dx to x, reversing direction at a fence
 (check-expect (tock CSCZ) CSCZ) ;; dx == 0, don't move
-(check-expect (tock CSLN) CSLP) ;; left-end -> reverse
-(check-expect (tock CSRP) CSRN) ;; right-end -> reverse
+(check-expect (tock CSLN) CSLP) ;; left-end → reverse
+(check-expect (tock CSRP) CSRN) ;; right-end → reverse
 ;; normal motion
 (check-expect (tock (make-cow CTR-X 1)) (make-cow (+ CTR-X 1) 1))
 (check-expect (tock (make-cow CTR-X -1)) (make-cow (+ CTR-X -1) -1))
@@ -115,7 +116,7 @@ nose hits the edge of the window, not the center of its body."
    (cow-x cs)
    (cow-dx cs)))
 
-;; CowState -> Image
+;; CowState → Image
 ;; render the Cow at x, facing left iff dx < 0
 (check-expect (render CSLP) (place-image IMG-RIGHT LEFT-FENCE CTR-Y MTS))
 (check-expect (render CSLN) (place-image IMG-LEFT LEFT-FENCE CTR-Y MTS))
@@ -132,7 +133,7 @@ nose hits the edge of the window, not the center of its body."
                (cow-x cs) CTR-Y
                MTS))
 
-;; CowState -> CowState
+;; CowState → CowState
 ;; reverse the direction the cow is traveling
 (check-expect (reverse-cow CSLP) CSLN)
 (check-expect (reverse-cow CSCZ) CSCZ)
@@ -142,7 +143,7 @@ nose hits the edge of the window, not the center of its body."
    (cow-x cs)
    (- (cow-dx cs))))
 
-;; CowState -> CowState
+;; CowState → CowState
 ;; increase the cow speed by one
 (check-expect (faster-cow CSLP) (make-cow LEFT-FENCE 2))
 (check-expect (faster-cow CSLN) (make-cow LEFT-FENCE -2))
@@ -154,7 +155,7 @@ nose hits the edge of the window, not the center of its body."
       -1 1)
       (cow-dx cs))))
 
-;; CowState -> CowState
+;; CowState → CowState
 ;; decrease the cow speed by one
 (check-expect (slower-cow CSLN) (make-cow LEFT-FENCE 0))
 (check-expect (slower-cow CSLP) (make-cow LEFT-FENCE 0))
@@ -168,7 +169,7 @@ nose hits the edge of the window, not the center of its body."
             [else 0])
       (cow-dx cs))))
 
-;; CowState -> CowState
+;; CowState → CowState
 ;; stop the cow (dx=0)
 (check-expect (stop-cow CSLP) (make-cow LEFT-FENCE 0))
 
@@ -178,7 +179,7 @@ nose hits the edge of the window, not the center of its body."
    0))
 
 
-;; CowState KeyEvent -> CowState
+;; CowState KeyEvent → CowState
 ;; make the cow reverse direction when space is pressed
 (check-expect (handle-key CSLP " ") CSLN)
 (check-expect (handle-key CSLN " ") CSLP)
