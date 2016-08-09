@@ -36,26 +36,6 @@ Work out the math you need to in order to make the sprite look like it is
 actually rolling.
 ")
 
-#;
-("
-STEP 4:
-Make the sprite roll down an inclined plane.
-")
-
-#;
-("
-STEP 5:
-Make the sprite accelerate as it rolls down the plane.
-")
-
-#;
-("
-STEP 6:
-Place the sprite in bowl. Maximum speed will be at the bottom of the bowl.
-Have it slow down as it converts kinetic energy into potential energy
-climbing the other side of the bowl. Assume no loss due to friction.
-")
-
 (require 2htdp/image)
 (require 2htdp/universe)
 
@@ -68,7 +48,6 @@ climbing the other side of the bowl. Assume no loss due to friction.
 (define MTS (empty-scene WIDTH HEIGHT))
 (define RADIUS 40)
 (define SPRITE
-  #;(bitmap "lambda.png")
   (overlay
    (radial-star 5 (* RADIUS 1/2) (* RADIUS 1) 'solid 'white)
    (circle RADIUS 'solid 'blue)))
@@ -85,8 +64,8 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;; - θ - Number[0,360) angle of rotation in degrees
 ;; - dx Integer change in x in pixels per tick
 ;; - dθ - Number[0,360) change in θ degrees per tick
-(define S0 (make-sprite MIN-X 0 3 -3))
-(define S1 (make-sprite MAX-X 0 -3 3)) 
+(define S0 (make-sprite MIN-X 0  3 -3))
+(define S1 (make-sprite MAX-X 0 -3  3))
 
 #;
 (define (fn-for-sprite s)
@@ -108,14 +87,13 @@ climbing the other side of the bowl. Assume no loss due to friction.
 
 ;; Sprite -> Sprite
 ;; start the world with (main S0)
-;;
 (define (main ws)
-  (big-bang ws                   ; Sprite
-            (on-tick   next-sprite)     ; Sprite -> Sprite
-            (to-draw   render-sprite)   ; Sprite -> Image
-            #;(stop-when ...)      ; Sprite -> Boolean
-            (on-mouse  handle-mouse)      ; Sprite Integer Integer MouseEvent -> Sprite
-            (on-key    handle-key)))    ; Sprite KeyEvent -> Sprite
+  (big-bang
+   ws                        ; Sprite
+   (on-tick   next-sprite)   ; Sprite -> Sprite
+   (to-draw   render-sprite) ; Sprite -> Image
+   (on-mouse  handle-mouse)  ; Sprite Integer Integer MouseEvent -> Sprite
+   (on-key    handle-key)))  ; Sprite KeyEvent -> Sprite
 
 ;; Sprite -> Sprite
 ;; produce the next position for the sprite: x+=dx
@@ -125,6 +103,7 @@ climbing the other side of the bowl. Assume no loss due to friction.
 (check-expect (next-sprite (make-sprite MIN-X 0 -3 -3)) (make-sprite MIN-X 0 3 3)) ;; reverse at left end
 
 ;(define (next-sprite ws) ws) ;stub
+
 ;; template from Sprite
 (define (next-sprite s)
   (cond
@@ -157,6 +136,7 @@ climbing the other side of the bowl. Assume no loss due to friction.
 (check-expect (render-sprite S0) (place-image SPRITE (sprite-x S0) CTR-Y MTS))
 
 ;(define (render-sprite ws) MTS); stub
+
 ;; template from Sprite
 (define (render-sprite s)
   (place-image (rotate (sprite-θ s) SPRITE)
@@ -169,6 +149,9 @@ climbing the other side of the bowl. Assume no loss due to friction.
 (check-expect (handle-key S1 " ") S0)
 (check-expect (handle-key S1 "a") S1)
 
+;(define (handle-key ws ke) ws) ; stub
+
+;; template from HtDW
 (define (handle-key ws ke)
   (cond [(key=? ke " ") S0]
         [else ws]))
@@ -178,6 +161,9 @@ climbing the other side of the bowl. Assume no loss due to friction.
 (check-expect (handle-mouse S1 0 0 "button-down") (reverse-sprite S1))
 (check-expect (handle-mouse S1 0 0 "move") S1)
 
+;(define (handle-mouse ws x y me) ws) ; stub
+
+;; template from HtDW
 (define (handle-mouse ws x y me)
   (cond [(mouse=? me "button-down") (reverse-sprite ws)]
         [else ws]))
@@ -196,4 +182,3 @@ climbing the other side of the bowl. Assume no loss due to friction.
    (- (sprite-dx s)) ; Integer
    (- (sprite-dθ s)) ; Number[0,360)
    ))
-
