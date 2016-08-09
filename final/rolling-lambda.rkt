@@ -73,13 +73,14 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;; =================
 ;; Data definitions:
 
-(define-struct sprite (x y dx))
-;; Sprite is (make-sprite x y dx )
+(define-struct sprite (x dx))
+;; Sprite is (make-sprite x dx )
 ;; - x Natural[0,WIDTH) screen x-coordinate in pixels
 ;; - dx Integer change in x in pixels per tick
-(define S0 (make-sprite MIN-X CTR-Y 3))
-(define S1 (make-sprite MAX-X CTR-Y -3))
+(define S0 (make-sprite MIN-X  3))
+(define S1 (make-sprite MAX-X -3))
 
+#;
 (define (fn-for-sprite s)
   (...
     (sprite-x s) ; Natural[0,WIDTH]
@@ -94,23 +95,30 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;; Functions:
 
 ;; Sprite -> Sprite
-;; start the world with ...
+;; start the world with (main S0)
 ;;
 (define (main ws)
   (big-bang ws                   ; Sprite
-            (on-tick   tock)     ; Sprite -> Sprite
-            (to-draw   render)   ; Sprite -> Image
-            (stop-when ...)      ; Sprite -> Boolean
-            (on-mouse  ...)      ; Sprite Integer Integer MouseEvent -> Sprite
-            (on-key    ...)))    ; Sprite KeyEvent -> Sprite
+            (on-tick   next-sprite)     ; Sprite -> Sprite
+            (to-draw   render-sprite)   ; Sprite -> Image
+            #;(stop-when ...)      ; Sprite -> Boolean
+            #;(on-mouse  ...)      ; Sprite Integer Integer MouseEvent -> Sprite
+            #;(on-key    ...)))    ; Sprite KeyEvent -> Sprite
 
 ;; Sprite -> Sprite
-;; produce the next ...
-;; !!!
-(define (tock ws) ...)
+;; produce the next position for the sprite: x+=dx
+(check-expect (next-sprite (make-sprite 0 3)) (make-sprite 3 3))
+
+;(define (next-sprite ws) ws) ;stub
+;; template from Sprite
+(define (next-sprite s)
+  (make-sprite
+    (+ (sprite-x s) (sprite-dx s))
+    (sprite-dx s)
+    ))
 
 
 ;; Sprite -> Image
 ;; render ...
 ;; !!!
-(define (render ws) ...)
+(define (render-sprite ws) ...)
