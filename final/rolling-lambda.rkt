@@ -108,15 +108,22 @@ climbing the other side of the bowl. Assume no loss due to friction.
 
 ;; Sprite -> Sprite
 ;; produce the next position for the sprite: x+=dx
-(check-expect (next-sprite (make-sprite 0 3)) (make-sprite 3 3))
+;;   reverse direction when reaching a fence
+(check-expect (next-sprite (make-sprite 50 3)) (make-sprite 53 3)) ;; normal motion
+(check-expect (next-sprite (make-sprite MAX-X 3)) (make-sprite MAX-X -3)) ;; reverse at right end
+(check-expect (next-sprite (make-sprite MIN-X -3)) (make-sprite MIN-X 3)) ;; reverse at left end
 
 ;(define (next-sprite ws) ws) ;stub
 ;; template from Sprite
 (define (next-sprite s)
-  (make-sprite
-   (+ (sprite-x s) (sprite-dx s))
-   (sprite-dx s)
-   ))
+  (cond
+    [(> (+ (sprite-x s) (sprite-dx s)) MAX-X)
+     (make-sprite MAX-X (- (sprite-dx s)))]
+    [(< (+ (sprite-x s) (sprite-dx s)) MIN-X)
+     (make-sprite MIN-X (- (sprite-dx s)))]
+    [else
+     (make-sprite (+ (sprite-x s) (sprite-dx s)) (sprite-dx s))]
+    ))
 
 
 ;; Sprite -> Image
@@ -130,4 +137,3 @@ climbing the other side of the bowl. Assume no loss due to friction.
                (sprite-x s)
                CTR-Y
                MTS))
-  
