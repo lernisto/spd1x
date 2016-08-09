@@ -66,8 +66,12 @@ climbing the other side of the bowl. Assume no loss due to friction.
 (define WIDTH 600)
 (define HEIGHT 200)
 (define MTS (empty-scene WIDTH HEIGHT))
-(define SPRITE #;(bitmap "lambda.png")
-  (overlay (radial-star 6 20 36 'solid 'white)(circle 40 'solid 'blue)))
+(define RADIUS 40)
+(define SPRITE
+  #;(bitmap "lambda.png")
+  (overlay
+   (radial-star 6 (* RADIUS 1/2) (* RADIUS 1) 'solid 'white)
+   (circle RADIUS 'solid 'blue)))
 (define MIN-X (/ (image-width SPRITE) 2))
 (define MAX-X (- WIDTH (/ (image-width SPRITE) 2)))
 (define CTR-Y (/ HEIGHT 2))
@@ -112,7 +116,7 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;; Sprite -> Sprite
 ;; produce the next position for the sprite: x+=dx
 ;;   reverse direction when reaching a fence
-(check-expect (next-sprite (make-sprite 50 0 3 -3)) (make-sprite 53 357 3 -3)) ;; normal motion
+(check-expect (next-sprite (make-sprite 80 0 3 -3)) (make-sprite 83 357 3 -3)) ;; normal motion
 (check-expect (next-sprite (make-sprite MAX-X 0 3 -3)) (make-sprite MAX-X 0 -3 3)) ;; reverse at right end
 (check-expect (next-sprite (make-sprite MIN-X 0 -3 -3)) (make-sprite MIN-X 0 3 3)) ;; reverse at left end
 
