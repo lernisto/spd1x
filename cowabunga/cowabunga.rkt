@@ -78,20 +78,20 @@ nose hits the edge of the window, not the center of its body."
 ;;
 (define (main ws)
   (big-bang ws                   ; CowState
-            (on-tick   tock)     ; CowState → CowState
-            (to-draw   render)   ; CowState → Image
+            (on-tick   next-cow)     ; CowState → CowState
+            (to-draw   render-cow)   ; CowState → Image
             #;(stop-when ...)      ; CowState → Boolean
             #;(on-mouse  ...)      ; CowState Integer Integer MouseEvent → CowState
             (on-key handle-key)))    ; CowState KeyEvent → CowState
 
 ;; CowState → CowState
 ;; produce the next state by adding dx to x, reversing direction at a fence
-(check-expect (tock CSCZ) CSCZ) ;; dx == 0, don't move
-(check-expect (tock CSLN) CSLP) ;; left-end → reverse
-(check-expect (tock CSRP) CSRN) ;; right-end → reverse
+(check-expect (next-cow CSCZ) CSCZ) ;; dx == 0, don't move
+(check-expect (next-cow CSLN) CSLP) ;; left-end → reverse
+(check-expect (next-cow CSRP) CSRN) ;; right-end → reverse
 ;; normal motion
-(check-expect (tock (make-cow CTR-X 1)) (make-cow (+ CTR-X 1) 1))
-(check-expect (tock (make-cow CTR-X -1)) (make-cow (+ CTR-X -1) -1))
+(check-expect (next-cow (make-cow CTR-X 1)) (make-cow (+ CTR-X 1) 1))
+(check-expect (next-cow (make-cow CTR-X -1)) (make-cow (+ CTR-X -1) -1))
 
 
 ;;(define (tock ws) #f); stub
@@ -106,7 +106,7 @@ nose hits the edge of the window, not the center of its body."
     ))
 
 ;; template from CowState
-(define (tock cs)
+(define (next-cow cs)
   (_tocklet
    cs
    (+ (cow-x cs) (cow-dx cs))
@@ -115,20 +115,27 @@ nose hits the edge of the window, not the center of its body."
 
 ;; CowState → Image
 ;; render the Cow at x, facing left iff dx < 0
-(check-expect (render CSLP) (place-image IMG-RIGHT LEFT-FENCE CTR-Y MTS))
-(check-expect (render CSLN) (place-image IMG-LEFT LEFT-FENCE CTR-Y MTS))
-(check-expect (render CSRP) (place-image IMG-RIGHT RIGHT-FENCE CTR-Y MTS))
-(check-expect (render CSRN) (place-image IMG-LEFT RIGHT-FENCE CTR-Y MTS))
+(check-expect (render-cow CSLP) (place-image IMG-RIGHT LEFT-FENCE CTR-Y MTS))
+(check-expect (render-cow CSLN) (place-image IMG-LEFT LEFT-FENCE CTR-Y MTS))
+(check-expect (render-cow CSRP) (place-image IMG-RIGHT RIGHT-FENCE CTR-Y MTS))
+(check-expect (render-cow CSRN) (place-image IMG-LEFT RIGHT-FENCE CTR-Y MTS))
 
 ;(define (render ws) MTS) ; stub
 
 ;; template from CowState
-(define (render cs)
-  (place-image (if (< (cow-dx cs) 0)
-                   IMG-LEFT
-                   IMG-RIGHT)
+(define (render-cow cs)
+  (place-image (choose-image cs)
                (cow-x cs) CTR-Y
                MTS))
+
+;; CowState → Image
+;; choose the correct image, based on direction of travel
+(check-expect (choose-image CSLP) IMG-RIGHT)
+(check-expect (choose-image CSLN) IMG-LEFT)
+
+;; template from CowState
+(define (choose-image cs)
+  (if (< (cow-dx cs) 0) IMG-LEFT IMG-RIGHT))
 
 ;; CowState → CowState
 ;; reverse the direction the cow is traveling
@@ -149,7 +156,7 @@ nose hits the edge of the window, not the center of its body."
   (make-cow
    (cow-x cs)
    (+ (if (< (cow-dx cs) 0)
-      -1 1)
+          -1 1)
       (cow-dx cs))))
 
 ;; CowState → CowState
