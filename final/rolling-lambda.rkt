@@ -53,10 +53,64 @@ Make the sprite accelerate as it rolls down the plane.
 STEP 6:
 Place the sprite in bowl. Maximum speed will be at the bottom of the bowl.
 Have it slow down as it converts kinetic energy into potential energy
-climbing the other side of the bowl.
+climbing the other side of the bowl. Assume no loss due to friction.
 ")
 
 (require 2htdp/image)
 (require 2htdp/universe)
 
+;; Rolling sprite animation
+
+;; =================
+;; Constants:
+(define WIDTH 600)
+(define HEIGHT 200)
 (define SPRITE (bitmap "lambda.png"))
+(define MIN-X (/ (image-width SPRITE) 2))
+(define MAX-X (- WIDTH (/ (image-width SPRITE) 2)))
+(define CTR-Y (/ HEIGHT 2))
+
+;; =================
+;; Data definitions:
+
+(define-struct sprite (x y dx))
+;; Sprite is (make-sprite x y dx )
+;; - x Natural[0,WIDTH) screen x-coordinate in pixels
+;; - dx Integer change in x in pixels per tick
+(define S0 (make-sprite MIN-X CTR-Y 3))
+(define S1 (make-sprite MAX-X CTR-Y -3))
+
+(define (fn-for-sprite s)
+  (...
+    (sprite-x s) ; Natural[0,WIDTH]
+    (sprite-dx s) ; Integer
+    ))
+;; template rules used
+;; - compound: 2 fields
+;; - simple atomic: Natural[0,WIDTH]
+;; - simple atomic: Integer
+
+;; =================
+;; Functions:
+
+;; Sprite -> Sprite
+;; start the world with ...
+;;
+(define (main ws)
+  (big-bang ws                   ; Sprite
+            (on-tick   tock)     ; Sprite -> Sprite
+            (to-draw   render)   ; Sprite -> Image
+            (stop-when ...)      ; Sprite -> Boolean
+            (on-mouse  ...)      ; Sprite Integer Integer MouseEvent -> Sprite
+            (on-key    ...)))    ; Sprite KeyEvent -> Sprite
+
+;; Sprite -> Sprite
+;; produce the next ...
+;; !!!
+(define (tock ws) ...)
+
+
+;; Sprite -> Image
+;; render ...
+;; !!!
+(define (render ws) ...)
