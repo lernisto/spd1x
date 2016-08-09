@@ -97,15 +97,12 @@ nose hits the edge of the window, not the center of its body."
 ;;(define (tock ws) #f); stub
 
 ;; workaround for missing `let`
-(define (_tocklet cs np x v)
+(define (_tocklet cs np x dx)
   (cond
-    [(< np LEFT-FENCE)
-     (make-cow LEFT-FENCE (abs v))]
-    [(> np RIGHT-FENCE)
-     (make-cow RIGHT-FENCE (- (abs v)))]
-    [(= 0 v) cs]
-    [else
-     (make-cow np v)]
+    [(< np LEFT-FENCE)   (make-cow LEFT-FENCE  (- dx))]
+    [(> np RIGHT-FENCE)  (make-cow RIGHT-FENCE (- dx))]
+    [(= 0 dx)            cs]
+    [else                (make-cow np dx)]
     ))
 
 ;; template from CowState
