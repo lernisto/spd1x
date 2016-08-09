@@ -62,7 +62,8 @@ but we would like you to use compound data.
 ;; - dx - Integer change in x pixels per tick
 ;; - dy - Integer change in y pixels per tick
 ;; - dθ - Number[0,360) change in θ degrees per tick
-(define BSTART (make-balloon 0 CTR-Y 0 3 0 -3))
+(define BSTART (make-balloon 0 CTR-Y 0 3 0 -10))
+(define B1 (make-balloon 1 1 1 1 1 1))
 
 #;
 (define (fn-for-balloon bs)
@@ -91,11 +92,11 @@ but we would like you to use compound data.
             (to-draw   render-balloon)   ; Balloon -> Image
             #;(stop-when ...)      ; Balloon -> Boolean
             #;(on-mouse  ...)      ; Balloon Integer Integer MouseEvent -> Balloon
-            #;(on-key    ...)))    ; Balloon KeyEvent -> Balloon
+            (on-key handle-key)))    ; Balloon KeyEvent -> Balloon
 
 ;; Balloon -> Balloon
 ;; produce the next position and rotation of the balloon
-(check-expect (next-balloon (make-balloon 0 0 0 1 1 1)) (make-balloon 1 1 1 1 1 1)) ;; normal
+(check-expect (next-balloon (make-balloon 0 0 0 1 1 1)) B1) ;; normal
 (check-expect (next-balloon (make-balloon 0 0 359 1 1 1)) (make-balloon 1 1 0 1 1 1)) ;; overflow
 (check-expect (next-balloon (make-balloon 0 0 0 1 1 -1)) (make-balloon 1 1 359 1 1 -1)) ;; underflow
 
@@ -106,7 +107,6 @@ but we would like you to use compound data.
    (+ (balloon-x bs) (balloon-dx bs))
    (+ (balloon-y bs) (balloon-dy bs))
    (modulo (+ (balloon-dθ bs) (balloon-θ bs)) 360)
-   
    (balloon-dx bs)
    (balloon-dy bs)
    (balloon-dθ bs)
@@ -124,6 +124,18 @@ but we would like you to use compound data.
 (define (render-balloon bs)
   (place-image
    (rotate (balloon-θ bs) BALLOON0)
-   (balloon-x bs)  
+   (balloon-x bs)
    (balloon-y bs)
    MTS))
+
+;; Balloon KeyEvent -> Balloon
+;; Pressing the space key should cause the program to start over with the water balloon back at the left side of the screen.
+(check-expect (handle-key B1 " ") BSTART)
+(check-expect (handle-key B1 "a") B1)
+
+;(define (handle-key b ke) b);stub
+
+;; template from HtDW
+(define (handle-key ws ke)
+  (cond [(key=? ke " ") BSTART]
+        [else ws]))
