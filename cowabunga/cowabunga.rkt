@@ -188,6 +188,7 @@ nose hits the edge of the window, not the center of its body."
 (check-expect (handle-key CSLN "down") (make-cow-state LEFT-FENCE 0))
 (check-expect (handle-key CSLP "up") (make-cow-state LEFT-FENCE 2))
 (check-expect (handle-key CSLN "up") (make-cow-state LEFT-FENCE -2))
+(check-expect (handle-key CSCZ "q") (stop-with CSCZ))
 
 (check-expect (handle-key CSLP "a") CSLP)
 
@@ -200,4 +201,5 @@ nose hits the edge of the window, not the center of its body."
         [(key=? ke "down") (slower-cow-state ws)]
         [(key=? ke "up") (faster-cow-state ws)]
         [(key=? ke "s") (stop-cow-state ws)]
+        [(key=? ke "q") (stop-with ws)]
         [else ws]))
