@@ -62,18 +62,19 @@ but we would like you to use compound data.
 ;; - dx - Integer change in x pixels per tick
 ;; - dy - Integer change in y pixels per tick
 ;; - dθ - Number[0,360) change in θ degrees per tick
-(define BSTART (make-balloon 0 CTR-Y 0 3 0 3))
+(define BSTART (make-balloon 0 CTR-Y 0 3 0 -3))
 
-(define (fn-for-ballon bs)
+#;
+(define (fn-for-balloon bs)
   (...
-    (balloon-x bs)  ; Natural[0,WIDTH]
-    (balloon-y bs)  ; Natural[0,HEIGHT]
-    (balloon-θ bs)  ; Number[0,360)
-    (balloon-dx bs) ; Integer
-    (balloon-dy bs) ; Integer
-    (balloon-dθ bs) ; Number[0,360)
-    )
-)
+   (balloon-x bs)  ; Natural[0,WIDTH]
+   (balloon-y bs)  ; Natural[0,HEIGHT]
+   (balloon-θ bs)  ; Number[0,360)
+   (balloon-dx bs) ; Integer
+   (balloon-dy bs) ; Integer
+   (balloon-dθ bs) ; Number(-360,360)
+   )
+  )
 ;; template rules used:
 ;; - compound: 6 fields
 
@@ -94,11 +95,35 @@ but we would like you to use compound data.
 
 ;; Balloon -> Balloon
 ;; produce the next position and rotation of the balloon
-;; !!!
-(define (next-balloon ws) ws)
+(check-expect (next-balloon (make-balloon 0 0 0 1 1 1)) (make-balloon 1 1 1 1 1 1)) ;; normal
+(check-expect (next-balloon (make-balloon 0 0 359 1 1 1)) (make-balloon 1 1 0 1 1 1)) ;; overflow
+(check-expect (next-balloon (make-balloon 0 0 0 1 1 -1)) (make-balloon 1 1 359 1 1 -1)) ;; underflow
+
+; (define (next-balloon ws) ws) ; stub
+;; <template from Balloon>
+(define (next-balloon bs)
+  (make-balloon
+   (+ (balloon-x bs) (balloon-dx bs))
+   (+ (balloon-y bs) (balloon-dy bs))
+   (modulo (+ (balloon-dθ bs) (balloon-θ bs)) 360)
+   
+   (balloon-dx bs)
+   (balloon-dy bs)
+   (balloon-dθ bs)
+   ))
 
 
 ;; Balloon -> Image
 ;; render the ballon at x,y in MTS rotated by θ
-;; !!!
-(define (render-balloon ws) MTS)
+(check-expect (render-balloon (make-balloon 0 0 90 1 1 1))
+              (place-image (rotate 90 BALLOON0) 0 0 MTS))
+
+;(define (render-balloon ws) MTS); stub
+
+;; <template from Balloon>
+(define (render-balloon bs)
+  (place-image
+   (rotate (balloon-θ bs) BALLOON0)
+   (balloon-x bs)  
+   (balloon-y bs)
+   MTS))
