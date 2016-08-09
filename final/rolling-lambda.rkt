@@ -65,6 +65,7 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;; Constants:
 (define WIDTH 600)
 (define HEIGHT 200)
+(define MTS (empty-scene WIDTH HEIGHT))
 (define SPRITE (bitmap "lambda.png"))
 (define MIN-X (/ (image-width SPRITE) 2))
 (define MAX-X (- WIDTH (/ (image-width SPRITE) 2)))
@@ -83,9 +84,9 @@ climbing the other side of the bowl. Assume no loss due to friction.
 #;
 (define (fn-for-sprite s)
   (...
-    (sprite-x s) ; Natural[0,WIDTH]
-    (sprite-dx s) ; Integer
-    ))
+   (sprite-x s) ; Natural[0,WIDTH]
+   (sprite-dx s) ; Integer
+   ))
 ;; template rules used
 ;; - compound: 2 fields
 ;; - simple atomic: Natural[0,WIDTH]
@@ -113,12 +114,20 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;; template from Sprite
 (define (next-sprite s)
   (make-sprite
-    (+ (sprite-x s) (sprite-dx s))
-    (sprite-dx s)
-    ))
+   (+ (sprite-x s) (sprite-dx s))
+   (sprite-dx s)
+   ))
 
 
 ;; Sprite -> Image
-;; render ...
-;; !!!
-(define (render-sprite ws) ...)
+;; place the sprite image at x,CTR-Y on MTS
+(check-expect (render-sprite S0) (place-image SPRITE (sprite-x S0) CTR-Y MTS))
+
+;(define (render-sprite ws) MTS); stub
+;; template from Sprite
+(define (render-sprite s)
+  (place-image SPRITE
+               (sprite-x s)
+               CTR-Y
+               MTS))
+  
