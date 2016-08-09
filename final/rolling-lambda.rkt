@@ -66,7 +66,8 @@ climbing the other side of the bowl. Assume no loss due to friction.
 (define WIDTH 600)
 (define HEIGHT 200)
 (define MTS (empty-scene WIDTH HEIGHT))
-(define SPRITE (bitmap "lambda.png"))
+(define SPRITE #;(bitmap "lambda.png")
+  (overlay (radial-star 6 20 36 'solid 'white)(circle 40 'solid 'blue)))
 (define MIN-X (/ (image-width SPRITE) 2))
 (define MAX-X (- WIDTH (/ (image-width SPRITE) 2)))
 (define CTR-Y (/ HEIGHT 2))
@@ -74,12 +75,14 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;; =================
 ;; Data definitions:
 
-(define-struct sprite (x dx))
-;; Sprite is (make-sprite x dx )
+(define-struct sprite (x θ dx dθ))
+;; Sprite is (make-sprite x θ dx dθ )
 ;; - x Natural[0,WIDTH) screen x-coordinate in pixels
+;; - θ - Number[0,360) angle of rotation in degrees
 ;; - dx Integer change in x in pixels per tick
-(define S0 (make-sprite MIN-X  3))
-(define S1 (make-sprite MAX-X -3))
+;; - dθ - Number[0,360) change in θ degrees per tick
+(define S0 (make-sprite MIN-X 0 3 -3))
+(define S1 (make-sprite MAX-X 0 -3 -3))
 
 #;
 (define (fn-for-sprite s)
@@ -109,20 +112,35 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;; Sprite -> Sprite
 ;; produce the next position for the sprite: x+=dx
 ;;   reverse direction when reaching a fence
-(check-expect (next-sprite (make-sprite 50 3)) (make-sprite 53 3)) ;; normal motion
-(check-expect (next-sprite (make-sprite MAX-X 3)) (make-sprite MAX-X -3)) ;; reverse at right end
-(check-expect (next-sprite (make-sprite MIN-X -3)) (make-sprite MIN-X 3)) ;; reverse at left end
+(check-expect (next-sprite (make-sprite 50 0 3 -3)) (make-sprite 53 357 3 -3)) ;; normal motion
+(check-expect (next-sprite (make-sprite MAX-X 0 3 -3)) (make-sprite MAX-X 0 -3 3)) ;; reverse at right end
+(check-expect (next-sprite (make-sprite MIN-X 0 -3 -3)) (make-sprite MIN-X 0 3 3)) ;; reverse at left end
 
 ;(define (next-sprite ws) ws) ;stub
 ;; template from Sprite
 (define (next-sprite s)
   (cond
     [(> (+ (sprite-x s) (sprite-dx s)) MAX-X)
-     (make-sprite MAX-X (- (sprite-dx s)))]
+     (make-sprite
+      MAX-X
+      (sprite-θ s) ;; !!! not exact
+      (- (sprite-dx s))
+      (- (sprite-dθ s))
+      )]
     [(< (+ (sprite-x s) (sprite-dx s)) MIN-X)
-     (make-sprite MIN-X (- (sprite-dx s)))]
+     (make-sprite
+      MIN-X
+      (sprite-θ s) ;; !!! not exact
+      (- (sprite-dx s))
+      (- (sprite-dθ s))
+      )]
     [else
-     (make-sprite (+ (sprite-x s) (sprite-dx s)) (sprite-dx s))]
+     (make-sprite
+      (+ (sprite-x s) (sprite-dx s))
+      (modulo (+ (sprite-θ s) (sprite-dθ s)) 360)
+      (sprite-dx s)
+      (sprite-dθ s)
+      )]
     ))
 
 
@@ -133,7 +151,7 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;(define (render-sprite ws) MTS); stub
 ;; template from Sprite
 (define (render-sprite s)
-  (place-image SPRITE
+  (place-image (rotate (sprite-θ s) SPRITE)
                (sprite-x s)
                CTR-Y
                MTS))
