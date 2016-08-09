@@ -70,7 +70,7 @@ climbing the other side of the bowl. Assume no loss due to friction.
 (define SPRITE
   #;(bitmap "lambda.png")
   (overlay
-   (radial-star 6 (* RADIUS 1/2) (* RADIUS 1) 'solid 'white)
+   (radial-star 5 (* RADIUS 1/2) (* RADIUS 1) 'solid 'white)
    (circle RADIUS 'solid 'blue)))
 (define MIN-X (/ (image-width SPRITE) 2))
 (define MAX-X (- WIDTH (/ (image-width SPRITE) 2)))
@@ -86,18 +86,22 @@ climbing the other side of the bowl. Assume no loss due to friction.
 ;; - dx Integer change in x in pixels per tick
 ;; - dθ - Number[0,360) change in θ degrees per tick
 (define S0 (make-sprite MIN-X 0 3 -3))
-(define S1 (make-sprite MAX-X 0 -3 -3))
+(define S1 (make-sprite MAX-X 0 -3 3)) 
 
 #;
 (define (fn-for-sprite s)
   (...
    (sprite-x s) ; Natural[0,WIDTH]
+   (sprite-θ s) ; Number[0,360)
    (sprite-dx s) ; Integer
+   (sprite-dθ s) ; Number[0,360)
    ))
 ;; template rules used
 ;; - compound: 2 fields
 ;; - simple atomic: Natural[0,WIDTH]
+;; - simple atomic: Number[0,360)
 ;; - simple atomic: Integer
+;; - simple atomic: Number[0,360)
 
 ;; =================
 ;; Functions:
@@ -110,8 +114,8 @@ climbing the other side of the bowl. Assume no loss due to friction.
             (on-tick   next-sprite)     ; Sprite -> Sprite
             (to-draw   render-sprite)   ; Sprite -> Image
             #;(stop-when ...)      ; Sprite -> Boolean
-            #;(on-mouse  ...)      ; Sprite Integer Integer MouseEvent -> Sprite
-            #;(on-key    ...)))    ; Sprite KeyEvent -> Sprite
+            (on-mouse  handle-mouse)      ; Sprite Integer Integer MouseEvent -> Sprite
+            (on-key    handle-key)))    ; Sprite KeyEvent -> Sprite
 
 ;; Sprite -> Sprite
 ;; produce the next position for the sprite: x+=dx
@@ -159,3 +163,37 @@ climbing the other side of the bowl. Assume no loss due to friction.
                (sprite-x s)
                CTR-Y
                MTS))
+
+;; Sprite KeyEvent -> Sprite
+;; restart the animation when ' ' is pressed
+(check-expect (handle-key S1 " ") S0)
+(check-expect (handle-key S1 "a") S1)
+
+(define (handle-key ws ke)
+  (cond [(key=? ke " ") S0]
+        [else ws]))
+
+;; Sprite Integer Integer MouseEvent -> Sprite
+;; reverse the direction of travel when mouse is clicked
+(check-expect (handle-mouse S1 0 0 "button-down") (reverse-sprite S1))
+(check-expect (handle-mouse S1 0 0 "move") S1)
+
+(define (handle-mouse ws x y me)
+  (cond [(mouse=? me "button-down") (reverse-sprite ws)]
+        [else ws]))
+
+;; Sprite -> Sprite
+;; reverse the direction of travel of the sprite
+(check-expect (reverse-sprite (make-sprite 0 0 1 -1)) (make-sprite 0 0 -1 1))
+
+;(define (reverse-sprite s) s);stub
+
+;; template from Sprite
+(define (reverse-sprite s)
+  (make-sprite
+   (sprite-x s) ; Natural[0,WIDTH]
+   (sprite-θ s) ; Number[0,360)
+   (- (sprite-dx s)) ; Integer
+   (- (sprite-dθ s)) ; Number[0,360)
+   ))
+
