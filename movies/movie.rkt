@@ -13,9 +13,9 @@ Design a data definition to represent a movie, including
 title, budget, and year released.
 
 To help you to create some examples, find some interesting movie facts below: 
-"Titanic" - budget: 200000000 released: 1997
-"Avatar" - budget: 237000000 released: 2009
-"The Avengers" - budget: 220000000 released: 2012
+\"Inside Out\" - budget: 175000000 released: 2015
+\"Up\" - budget: 175000000 released: 2009
+\"How to Train your Dragon\" - budget: 165000000 released: 2010
 
 However, feel free to resarch more on your own!")
 
